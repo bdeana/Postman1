@@ -19,7 +19,7 @@ public class HardwareController {
     private HardwareService hardwareService;
 
 
-    /*@GetMapping
+    @GetMapping
     public List<HardwareDTO> getAllHardwares() {
         return hardwareService.getAllHardwares().stream().toList();
     }
@@ -27,7 +27,9 @@ public class HardwareController {
     @GetMapping("/{sifra}")
     public List<HardwareDTO> filterHardwaressBySifra(@PathVariable Integer sifra) {
         return hardwareService.getHardwaresBySifra(sifra).stream().toList();
-    }*/
+    }
+    /*
+
     @GetMapping
     public List<Hardware> getAllHardwares() {
         return hardwareService.getAllHardwares().stream().toList();
@@ -36,5 +38,5 @@ public class HardwareController {
     @GetMapping("/{sifra}")
     public List<Hardware> filterHardwaresBySifra(@PathVariable Integer sifra) {
         return hardwareService.getHardwaresBySifra(sifra).stream().toList();
-    }
+    }*/
 }
