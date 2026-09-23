@@ -5,10 +5,12 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
 public class MockHrdwareRepository implements HardwareRepository {
+
     private static List<Hardware> hardwareList;
 
     static {
@@ -24,6 +26,7 @@ public class MockHrdwareRepository implements HardwareRepository {
         hardwareList.add(thirdHardware);
         hardwareList.add(fourthHardware);
     }
+
     @Override
     public List<Hardware> getAllHardwares() {
         return hardwareList;
@@ -34,5 +37,41 @@ public class MockHrdwareRepository implements HardwareRepository {
         return hardwareList.stream()
                 .filter(a -> a.getSifra().equals(sifra))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<Hardware> updateHardware(Hardware hardware, Integer id) {
+        if (id < 0 || id >= hardwareList.size()) {
+            return Optional.empty();
+        }
+
+        Hardware existingHardware = hardwareList.get(id);
+
+        existingHardware.setNaziv(hardware.getNaziv());
+        existingHardware.setCijena(hardware.getCijena());
+        existingHardware.setTip(hardware.getTip());
+
+        return Optional.of(existingHardware);
+    }
+
+    @Override
+    public boolean hardwareByIdExists(Integer id) {
+        return id >= 0 && id < hardwareList.size();
+    }
+
+    @Override
+    public Integer saveNewHardware(Hardware hardware) {
+        hardwareList.add(hardware);
+        return hardwareList.size() - 1;
+    }
+
+    @Override
+    public boolean deleteHardwareById(Integer id) {
+        if (id < 0 || id >= hardwareList.size()) {
+            return false;
+        }
+
+        hardwareList.remove((int) id);
+        return true;
     }
 }

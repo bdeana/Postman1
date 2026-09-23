@@ -5,13 +5,22 @@ import hr.java.web.helloworld.dto.HardwareDTO;
 
 
 import java.util.List;
+import java.util.Optional;
+
 
 public interface HardwareService {
 
-    /*List<Hardware> getAllHardwares();
-
-    List<Hardware> getHardwaresBySifra(Integer sifra);*/
     List<HardwareDTO> getAllHardwares();
 
     List<HardwareDTO> getHardwaresBySifra(Integer sifra);
+
+    Optional<HardwareDTO> updateHardware(HardwareDTO hardwareDTO, Integer id);
+
+    boolean hardwareByIdExists(Integer id);
+
+    /*boolean hardwareArticleById(Integer id);*/
+
+    Integer saveNewHardware(HardwareDTO hardware);
+
+    boolean deleteHardwareById(Integer id);
 }
