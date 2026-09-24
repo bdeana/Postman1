@@ -37,19 +37,25 @@ public class HardwareServiceImpl implements HardwareService {
         return new HardwareDTO(
                 hardware.getNaziv(),
                 hardware.getCijena(),
-                hardware.getTip()
+                hardware.getTip(),
+                hardware.getSifra(),
+                hardware.getKolicina()
         );
     }
 
+
     private Hardware convertHardwareDtoToHardware(HardwareDTO hardwareDTO) {
         return new Hardware(
+                null,
                 hardwareDTO.getNaziv(),
                 hardwareDTO.getCijena(),
                 hardwareDTO.getTip(),
-                null,
-                0
+                hardwareDTO.getSifra(),
+                hardwareDTO.getKolicina()
         );
     }
+
+
 
     @Override
     public Optional<HardwareDTO> updateHardware(HardwareDTO hardwareDTO, Integer id) {

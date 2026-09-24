@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class HardwareDTO {
+
     @NotBlank
     private String naziv;
 
@@ -20,4 +21,12 @@ public class HardwareDTO {
 
     @NotBlank
     private String tip;
+
+    @NotNull
+    @Positive
+    private Integer sifra;
+
+    @NotNull
+    @Positive
+    private Integer kolicina;
 }
