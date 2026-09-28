@@ -24,9 +24,11 @@ public class JdbcHardwareRepository implements HardwareRepository {
 
     @Override
     public List<Hardware> getAllHardwares() {
+
         String sql = """
-                SELECT id, naziv, cijena, tip, sifra, kolicina
-                FROM hardware
+                SELECT h.id, h.naziv, h.cijena, t.naziv AS tip, h.sifra, h.kolicina
+                FROM Hardware h
+                JOIN Type t ON h.tip_id = t.id
                 """;
 
         return jdbcTemplate.query(sql, (rs, rowNum) ->
@@ -43,10 +45,12 @@ public class JdbcHardwareRepository implements HardwareRepository {
 
     @Override
     public List<Hardware> getHardwaresBySifra(Integer sifra) {
+
         String sql = """
-                SELECT id, naziv, cijena, tip, sifra, kolicina
-                FROM hardware
-                WHERE sifra = ?
+                SELECT h.id, h.naziv, h.cijena, t.naziv AS tip, h.sifra, h.kolicina
+                FROM Hardware h
+                JOIN Type t ON h.tip_id = t.id
+                WHERE h.sifra = ?
                 """;
 
         return jdbcTemplate.query(
@@ -66,9 +70,12 @@ public class JdbcHardwareRepository implements HardwareRepository {
 
     @Override
     public Optional<Hardware> updateHardware(Hardware hardware, Integer id) {
+
         String sql = """
-                UPDATE hardware
-                SET naziv = ?, cijena = ?, tip = ?
+                UPDATE Hardware
+                SET naziv = ?,
+                    cijena = ?,
+                    tip_id = (SELECT id FROM Type WHERE naziv = ?)
                 WHERE id = ?
                 """;
 
@@ -85,9 +92,10 @@ public class JdbcHardwareRepository implements HardwareRepository {
         }
 
         String selectSql = """
-                SELECT id, naziv, cijena, tip, sifra, kolicina
-                FROM hardware
-                WHERE id = ?
+                SELECT h.id, h.naziv, h.cijena, t.naziv AS tip, h.sifra, h.kolicina
+                FROM Hardware h
+                JOIN Type t ON h.tip_id = t.id
+                WHERE h.id = ?
                 """;
 
         return jdbcTemplate.query(
@@ -107,9 +115,10 @@ public class JdbcHardwareRepository implements HardwareRepository {
 
     @Override
     public boolean hardwareByIdExists(Integer id) {
+
         String sql = """
                 SELECT COUNT(*)
-                FROM hardware
+                FROM Hardware
                 WHERE id = ?
                 """;
 
@@ -124,14 +133,22 @@ public class JdbcHardwareRepository implements HardwareRepository {
 
     @Override
     public Integer saveNewHardware(Hardware hardware) {
+
         String sql = """
-                INSERT INTO hardware (naziv, cijena, tip, sifra, kolicina)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO Hardware (naziv, cijena, tip_id, sifra, kolicina)
+                VALUES (
+                    ?,
+                    ?,
+                    (SELECT id FROM Type WHERE naziv = ?),
+                    ?,
+                    ?
+                )
                 """;
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
+
             PreparedStatement ps = connection.prepareStatement(
                     sql,
                     Statement.RETURN_GENERATED_KEYS
@@ -144,6 +161,7 @@ public class JdbcHardwareRepository implements HardwareRepository {
             ps.setInt(5, hardware.getKolicina());
 
             return ps;
+
         }, keyHolder);
 
         return keyHolder.getKey().intValue();
@@ -151,8 +169,9 @@ public class JdbcHardwareRepository implements HardwareRepository {
 
     @Override
     public boolean deleteHardwareById(Integer id) {
+
         String sql = """
-                DELETE FROM hardware
+                DELETE FROM Hardware
                 WHERE id = ?
                 """;
 
